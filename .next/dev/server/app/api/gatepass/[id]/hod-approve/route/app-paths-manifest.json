@@ -1,0 +1,3 @@
+{
+  "/api/gatepass/[id]/hod-approve/route": "app/api/gatepass/[id]/hod-approve/route.js"
+}

@@ -1,0 +1,17 @@
+{
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/api/auth/logout/route": "app/api/auth/logout/route.js",
+  "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/api/gatepass/[id]/hod-approve/route": "app/api/gatepass/[id]/hod-approve/route.js",
+  "/api/gatepass/[id]/mentor-approve/route": "app/api/gatepass/[id]/mentor-approve/route.js",
+  "/api/gatepass/route": "app/api/gatepass/route.js",
+  "/api/verification/exit/route": "app/api/verification/exit/route.js",
+  "/api/verification/history/route": "app/api/verification/history/route.js",
+  "/api/verification/scan/route": "app/api/verification/scan/route.js",
+  "/hod/page": "app/hod/page.js",
+  "/login/page": "app/login/page.js",
+  "/mentor/page": "app/mentor/page.js",
+  "/page": "app/page.js",
+  "/security/page": "app/security/page.js",
+  "/student/page": "app/student/page.js"
+}

@@ -581,7 +581,7 @@ export async function verifyPassForGate(token: string): Promise<VerifyResult> {
       rollNo: r.roll_no,
       purpose: r.purpose,
       status: r.status,
-      outTime: r.out_time ? new Date(r.out_time).toISOString() : "",
+      outTime: r.out_time ?? "",
       validUntil: r.valid_until ? new Date(r.valid_until).getTime() : null,
       exitTime: r.exit_time ? new Date(r.exit_time).getTime() : null,
     },

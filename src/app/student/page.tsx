@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
+import { QRCodeSVG } from "qrcode.react";
 
 interface StudentProfile {
   id: string;
@@ -188,7 +189,7 @@ const [date, setDate] = useState(() => new Date().toLocaleDateString("en-CA", { 
                           <div className="text-xs text-slate-500 mb-1">
                             Show this at the gate (in production this renders as a scannable QR code)
                           </div>
-                          <div className="font-mono text-xs break-all text-[var(--cbit-maroon)]">{p.qrToken}</div>
+                          <QRCodeSVG value={p.qrToken} size={100} className="mx-auto" />
                           {p.validUntil && (
                             <div className="text-xs text-slate-400 mt-1">
                               Valid until {new Date(p.validUntil).toLocaleString()}

@@ -31,5 +31,5 @@ const token = await createSessionToken({
 });
   await setSessionCookie(token);
 
-  return NextResponse.json({ role: user.role, name: user.name });
+  return NextResponse.json({ role: user.role, name: user.name, token });
 }

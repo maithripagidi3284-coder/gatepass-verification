@@ -387,7 +387,7 @@ export async function hodApprovePass(id: string) {
         hod_action_at = now(),
         qr_token = ${token},
         valid_from = now(),
-        valid_until = (requested_date::text || ' 16:00:00')::timestamp AT TIME ZONE 'Asia/Kolkata'
+         valid_until = now() + interval '2 hours'
     WHERE id = ${id} AND status = 'MENTOR_APPROVED'
     RETURNING valid_until
   `;

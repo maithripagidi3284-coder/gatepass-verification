@@ -9,7 +9,6 @@ const ROLE_FOR_PREFIX: Record<string, string> = {
   "/student": "student",
   "/mentor": "mentor",
   "/hod": "hod",
-  "/security": "security",
   "/admin": "admin",
 };
 
@@ -36,5 +35,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/student/:path*", "/mentor/:path*", "/hod/:path*", "/security/:path*", "/admin/:path*"],
+  matcher: ["/student/:path*", "/mentor/:path*", "/hod/:path*", "/admin/:path*"],
 };

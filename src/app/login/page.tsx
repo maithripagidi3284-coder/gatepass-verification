@@ -11,11 +11,19 @@ const ROLE_HOME: Record<string, string> = {
   admin: "/admin",
 };
 
+const ROLE_LABEL: Record<string, string> = {
+  student: "Student",
+  mentor: "Mentor",
+  hod: "HOD",
+};
+
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const next = params.get("next");
   const wrongRole = params.get("error") === "wrong_role";
+  const selectedRole = params.get("role");
+  const selectedRoleLabel = selectedRole ? ROLE_LABEL[selectedRole] : undefined;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,12 +45,20 @@ function LoginForm() {
       setError(data.error ?? "Login failed.");
       return;
     }
+    if (selectedRole && data.role !== selectedRole) {
+      setError(
+        `That account is registered as ${data.role}, not ${selectedRoleLabel}. Go back and pick the right role.`
+      );
+      return;
+    }
     router.push(next || ROLE_HOME[data.role] || "/");
   }
 
   return (
     <div className="max-w-sm mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-[var(--cbit-maroon)]">Sign in</h1>
+      <h1 className="text-2xl font-bold text-[var(--cbit-maroon)]">
+        Sign in{selectedRoleLabel ? ` — ${selectedRoleLabel}` : ""}
+      </h1>
       {wrongRole && (
         <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2">
           That account isn&apos;t authorized for the page you tried to open.
@@ -84,7 +100,6 @@ function LoginForm() {
         <div>Student: maithri@cbit.ac.in / student123</div>
         <div>Mentor: ramesh.kumar@cbit.ac.in / mentor123</div>
         <div>HOD: hod.cse@cbit.ac.in / hod123</div>
-        <div>Security: security@cbit.ac.in / security123</div>
         <div>Admin: admin@cbit.ac.in / admin123</div>
       </div>
     </div>

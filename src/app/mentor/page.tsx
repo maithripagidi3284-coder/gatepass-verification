@@ -20,12 +20,50 @@ interface Pass {
   createdAt: number;
 }
 
+interface UploadResult {
+  total: number;
+  created: number;
+  skippedCount: number;
+  errors: { row: number; rollNo?: string; reason?: string }[];
+}
+
 export default function MentorPage() {
   const [mentorId, setMentorId] = useState<string | null>(null);
   const [pending, setPending] = useState<Pass[]>([]);
   const [history, setHistory] = useState<Pass[]>([]);
   const [popupPass, setPopupPass] = useState<Pass | null>(null);
   const seenIds = useRef<Set<string>>(new Set());
+
+  const [uploading, setUploading] = useState(false);
+  const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
+  const [uploadError, setUploadError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadError("");
+    setUploadResult(null);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/students/bulk-upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (!res.ok) {
+        setUploadError(data.error ?? "Upload failed.");
+      } else {
+        setUploadResult(data);
+      }
+    } catch {
+      setUploadError("Upload failed. Check your connection and try again.");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -70,6 +108,51 @@ export default function MentorPage() {
 
           {mentorId && (
             <>
+              <div className="bg-white rounded-xl p-4 shadow space-y-3">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-semibold">Upload student data</h2>
+                  
+                   <a
+                    href="/student-upload-template.csv"
+                    download
+                    className="text-xs text-[var(--cbit-maroon)] font-medium hover:underline"
+                  >
+                    Download template
+                  </a>
+                </div>
+                <p className="text-xs text-slate-400">
+                  Upload a .csv or .xlsx file with columns: Roll Number, Student Name, Branch, Year, Email, Phone
+                  Number. Uploaded students are assigned to you as their mentor.
+                </p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv,.xlsx,.xls"
+                  onChange={handleUpload}
+                  disabled={uploading}
+                  className="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[var(--cbit-maroon)] file:text-white file:font-medium hover:file:bg-[var(--cbit-maroon-dark)]"
+                />
+                {uploading && <p className="text-sm text-slate-400">Uploading and validating…</p>}
+                {uploadError && <p className="text-sm text-red-600">{uploadError}</p>}
+                {uploadResult && (
+                  <div className="text-sm space-y-2">
+                    <p className="text-[var(--cbit-green)] font-medium">
+                      {uploadResult.created} of {uploadResult.total} students added.
+                    </p>
+                    {uploadResult.errors.length > 0 && (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-2 text-xs text-red-700 space-y-1 max-h-32 overflow-y-auto">
+                        {uploadResult.errors.map((e, i) => (
+                          <div key={i}>
+                            Row {e.row}
+                            {e.rollNo ? ` (${e.rollNo})` : ""}: {e.reason}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div className="bg-white rounded-xl p-4 shadow">
                 <h2 className="font-semibold mb-3">Pending requests ({pending.length})</h2>
                 {pending.length === 0 && <p className="text-sm text-slate-400">No pending requests.</p>}

@@ -189,6 +189,37 @@ export async function createMentorRecord(name: string, userId: string) {
   return rows[0].id as string;
 }
 
+/**
+ * Creates one user+student pair inside a transaction. Throws on failure
+ * (including unique-constraint violations like duplicate roll_no/email) so
+ * the caller can catch and report per-row errors during a bulk import.
+ */
+export async function createStudentWithAccount(input: {
+  name: string;
+  email: string;
+  passwordHash: string;
+  rollNo: string;
+  department: string;
+  year: number;
+  mentorId: string;
+  parentPhone: string;
+}): Promise<void> {
+  const db = getSql();
+  await db.begin(async (tx) => {
+    const userRows = await tx`
+      INSERT INTO users (name, email, password_hash, role)
+      VALUES (${input.name}, ${input.email}, ${input.passwordHash}, 'student')
+      RETURNING id
+    `;
+    const userId = userRows[0].id as string;
+
+    await tx`
+      INSERT INTO students (user_id, roll_no, photo_url, department, year, mentor_id, parent_phone)
+      VALUES (${userId}, ${input.rollNo}, ${""}, ${input.department}, ${input.year}, ${input.mentorId}, ${input.parentPhone})
+    `;
+  });
+}
+
 export async function createStudentRecord(input: {
   userId: string;
   rollNo: string;

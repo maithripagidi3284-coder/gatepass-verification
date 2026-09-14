@@ -84,3 +84,6 @@ src/
     student/, mentor/, hod/, security/, admin/, login/   - pages
 schema.sql               - Postgres schema matching the design doc
 ```
+## Setup
+
+Clone the repository and install the required dependencies before running the application.

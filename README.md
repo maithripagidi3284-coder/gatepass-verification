@@ -13,7 +13,7 @@ npm run dev
 ```
 
 Open http://localhost:3000
-
+Improve usage documentation
 ## Demo accounts
 
 All seeded in src/lib/store.ts -- change these before any real use.
